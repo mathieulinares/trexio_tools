@@ -734,14 +734,14 @@ def run_molden(trexio_file, filename, normalized_basis=True, multiplicity=None, 
 
     norm = []
     for l in range(5):
-       g = resultsFile.gaussian()
-       gauss.center = (0.,0.,0.)
-       gauss.expo = 1.0
-       gauss.sym = conv[l][0]
-       ref = gauss.norm
-       norm.append([])
-       for m in conv[l]:
-            g = resultsFile.gaussian()
+        gauss = resultsFile_local.gaussian()
+        gauss.center = (0.,0.,0.)
+        gauss.expo = 1.0
+        gauss.sym = conv[l][0]
+        ref = gauss.norm
+        norm.append([])
+        for m in conv[l]:
+            gauss = resultsFile_local.gaussian()
             gauss.center = (0.,0.,0.)
             gauss.expo = 1.0
             gauss.sym = m
@@ -833,11 +833,13 @@ def run(trexio_filename, filename, filetype, back_end, spin=None, motype=None, s
         run_resultsFile(trexio_file, filename_info, motype)
 
     elif filetype.lower() == "gamess":
+        getFile_local, _, _, _ = _require_resultsfile()
         # Handle the case where the number of states is greater than 1
         try:
-            res = getFile(filename)
-        except Exception:
-            print(f"An error occurred while parsing the file using resultsFile : {Exception}")
+            res = getFile_local(filename)
+        except Exception as exc:
+            print(f"An error occurred while parsing the file using resultsFile : {exc}")
+            raise
 
         # Open the TREXIO file for writing
         trexio_file = trexio.File(trexio_filename, mode='w', back_end=back_end)

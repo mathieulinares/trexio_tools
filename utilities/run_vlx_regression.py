@@ -63,8 +63,11 @@ def main():
     temporary_directory = None
     output_dir = args.output_dir
     if output_dir is None:
-        temporary_directory = tempfile.TemporaryDirectory(prefix="trexio-vlx-regression-")
-        output_dir = temporary_directory.name
+        if args.keep_output:
+            output_dir = tempfile.mkdtemp(prefix="trexio-vlx-regression-")
+        else:
+            temporary_directory = tempfile.TemporaryDirectory(prefix="trexio-vlx-regression-")
+            output_dir = temporary_directory.name
     else:
         os.makedirs(output_dir, exist_ok=True)
 

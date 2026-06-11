@@ -104,7 +104,12 @@ def main():
     parser.add_argument("--tolerance", type=float, default=1.0e-10, help="Absolute tolerance for floating-point comparisons")
     args = parser.parse_args()
 
-    molecule, basis, mos, scf_results = _load_veloxchem_objects(args.vlx_h5)
+    try:
+        molecule, basis, mos, scf_results = _load_veloxchem_objects(args.vlx_h5)
+    except ImportError:
+        print("VeloxChem is required to compare VLX inputs.", file=sys.stderr)
+        return 1
+
     basis_data = _build_basis_data(molecule, basis)
     mo_data = _build_mo_data(mos, basis_data["ao_permutation"])
     trexio_data = _read_trexio_data(args.trexio_file)

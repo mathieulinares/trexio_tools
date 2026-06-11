@@ -2,10 +2,13 @@ import math
 import os
 import re
 
-import h5py
 import numpy as np
 import trexio
 
+try:
+    import h5py
+except ImportError:
+    h5py = None
 
 def _trexio_backend(back_end):
     key = str(back_end).strip().lower()
@@ -107,6 +110,9 @@ def _first_success(readers):
 
 
 def _read_plain_scf_group(path):
+    if h5py is None:
+        raise ImportError("h5py is required to read plain VeloxChem HDF5 files.")
+
     with h5py.File(path, "r") as handle:
         if "scf" not in handle:
             raise KeyError("No scf group found in VeloxChem HDF5 file.")
